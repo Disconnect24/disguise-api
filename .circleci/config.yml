@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run: 
           name: Install Google Cloud SDK
-          comand: ./setup.sh
+          command: ./setup.sh
       # Download our go deps and test.
       - run: go get -v -t -d ./...
       - run: go test -v ./...
