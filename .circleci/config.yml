@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version
+      - image: circleci/golang:1.8
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    steps:
+      - checkout
+      # Set up client secret for GAE later on.
+      - run: echo $CLIENT_SECRET | base64 --decode > ${HOME}/client-secret.json
+      - run: gcloud --quiet components update app
+      - run: gcloud auth activate-service-account --key-file $(HOME)/client-secret.json
+      - run: gcloud config set project $GCLOUD_PROJECT
+
+      # Download our go deps and test.
+      - run: go get -v -t -d ./...
+      - run: go test -v ./...
+deployment:
+  prod:
+    branch: master
+    commands:
+      # And we're off!
+      - gcloud -q app deploy app.yaml --promote --version=1
