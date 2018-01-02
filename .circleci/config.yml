@@ -8,11 +8,11 @@ jobs:
     steps:
       - checkout
       # Download the Google Cloud SDK
-      - run: curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=$HOME/google-cloud-sdk --disable-prompts
+      - run: curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=$HOME --disable-prompts
       # Set up client secret for GAE later on.
       - run: echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update app
-      - run: $HOME/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $(HOME)/client-secret.json
+      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update
+      - run: $HOME/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $HOME/client-secret.json
       - run: $HOME/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT
 
       # Download our go deps and test.
@@ -23,4 +23,4 @@ deployment:
     branch: master
     commands:
       # And we're off!
-      - gcloud -q app deploy app.yaml --promote --version=1
+      - $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
