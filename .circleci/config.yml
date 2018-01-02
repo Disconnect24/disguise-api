@@ -9,7 +9,7 @@ jobs:
       - checkout
       # Download the Google Cloud SDK
       - run: curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
-      - run: tar -C $HOME -vf /tmp/google-cloud-sdk.tar.gz
+      - run: tar -C $HOME -xvf /tmp/google-cloud-sdk.tar.gz
       - run: $HOME/google-cloud-sdk/install.sh
       # Set up client secret for GAE later on.
       - run: echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
