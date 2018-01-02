@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run: 
           name: Install Google Cloud SDK
-          command: ./setup.sh
+          command: $CIRCLE_WORKING_DIRECTORY/.circleci/setup.sh
       # Download our go deps and test.
       - run: go get -v -t -d ./...
       - run: go test -v ./...
@@ -20,7 +20,7 @@ jobs:
     steps:
       - run:
           name: Install Google Cloud SDK
-          command: ./setup.sh
+          command: $CIRCLE_WORKING_DIRECTORY/.circleci/setup.sh
       - run:
           name: Deploy
           command: $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
