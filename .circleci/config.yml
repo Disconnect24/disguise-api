@@ -8,9 +8,7 @@ jobs:
     steps:
       - checkout
       # Download the Google Cloud SDK
-      - run: curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
-      - run: tar -C $HOME -xvf /tmp/google-cloud-sdk.tar.gz
-      - run: $HOME/google-cloud-sdk/install.sh
+      - run: curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=$HOME/google-cloud-sdk --disable-prompts
       # Set up client secret for GAE later on.
       - run: echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
       - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update app
