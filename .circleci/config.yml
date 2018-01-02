@@ -1,26 +1,38 @@
 version: 2
 jobs:
-  build:
+  build-job:
     docker:
       # specify the version
       - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    working_directory: /go/src/github.com/Disconnect24/disguise-api
     steps:
       - checkout
-      # Download the Google Cloud SDK
-      - run: curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=$HOME --disable-prompts
-      # Set up client secret for GAE later on.
-      - run: echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
-      - run: $HOME/google-cloud-sdk/bin/gcloud --quiet components update
-      - run: $HOME/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $HOME/client-secret.json
-      - run: $HOME/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT
-
+      - run: 
+          name: Install Google Cloud SDK
+          comand: ./setup.sh
       # Download our go deps and test.
       - run: go get -v -t -d ./...
       - run: go test -v ./...
-deployment:
-  prod:
-    branch: master
-    commands:
-      # And we're off!
-      - $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
+  deploy-job:
+    docker:
+      - image: circleci/golang:1.8
+    working_directory: /go/src/github.com/Disconnect24/disguise-api
+    steps:
+      - run:
+          name: Install Google Cloud SDK
+          command: ./setup.sh
+      - run:
+          name: Deploy
+          command: $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-job
+      - deploy-job:
+          requires:
+            - build-job
+          filters:
+            branches:
+              only: master
