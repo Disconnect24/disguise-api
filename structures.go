@@ -12,5 +12,5 @@ type Mail struct {
 	SenderID    string
 	Body        string
 	RecipientID string
-	Sent        bool
+	Delivered   bool
 }

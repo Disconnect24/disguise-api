@@ -119,7 +119,7 @@ func Send(w http.ResponseWriter, r *http.Request, domain string) {
 				SenderID:    senderID[1:],
 				Body:        mailContents,
 				RecipientID: wiiRecipient[1:],
-				Sent:        false,
+				Delivered:   false,
 			}
 			_, err := datastore.Put(ctx, mailKey, &mailStruct)
 			if err != nil {
