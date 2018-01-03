@@ -1,38 +1,25 @@
 version: 2
 jobs:
-  build-job:
+  build:
     docker:
-      # specify the version
-      - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/Disconnect24/disguise-api
+      # As of right now these both use jessie as a base.
+      # :fingers_crossed: they won't change
+      - image: circleci/golang:1.9
+    working_directory: /go/src/disconnect24.xyz/disguise-api
     steps:
       - checkout
-      - run: 
-          name: Install Google Cloud SDK
-          command: $CIRCLE_WORKING_DIRECTORY/.circleci/setup.sh
       # Download our go deps and test.
       - run: go get -v -t -d ./...
       - run: go test -v ./...
-  deploy-job:
-    docker:
-      - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/Disconnect24/disguise-api
-    steps:
+      # Looks like it worked, awesome! ^^
       - run:
-          name: Install Google Cloud SDK
-          command: $CIRCLE_WORKING_DIRECTORY/.circleci/setup.sh
-      - run:
-          name: Deploy
-          command: $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
-
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build-job
-      - deploy-job:
-          requires:
-            - build-job
-          filters:
-            branches:
-              only: master
+          name: Install Cloud SDK + deploy if master
+          command: |
+            if [ "$(git rev-parse --abbrev-ref HEAD)" "==" "master" ] || [ -z $CIRCLE_PR_USERNAME ]; then
+              # Time to push!
+              curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=$HOME --disable-prompts
+              echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
+              $HOME/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $HOME/client-secret.json
+              $HOME/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT
+              $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
+            fi
