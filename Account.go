@@ -17,14 +17,8 @@ func Account(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	wiiID := r.Form.Get("mlid")
-	if wiiID == "" {
-		fmt.Fprint(w, "At least humor us and use the correct syntax.")
-		return
-	} else if wiiID[0:1] != "w" {
-		fmt.Fprint(w, GenNormalErrorCode(610, "Invalid Wii Friend Code."))
-		return
-	} else if len(wiiID) != 17 {
-		fmt.Fprint(w, GenNormalErrorCode(610, "Invalid Wii Friend Code."))
+	if !FriendCodeIsValid(wiiID) {
+		fmt.Fprint(w, GenNormalErrorCode(610, "Invalid friend code."))
 		return
 	}
 
