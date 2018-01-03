@@ -30,7 +30,7 @@ func init() {
 
 	// Handle literally anything that isn't matched below
 	http.HandleFunc("/", slashHandler)
-	
+
 	http.HandleFunc("/cgi-bin/account.cgi", Account)
 	http.HandleFunc("/cgi-bin/check.cgi", checkHandler)
 	http.HandleFunc("/cgi-bin/receive.cgi", Receive)
