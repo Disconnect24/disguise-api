@@ -155,7 +155,7 @@ func handlePCmail(senderID string, pcRecipient string, mailContents string) erro
 	// The only reason we can get away with the following is
 	// because the Wii POSTs valid SMTP syntax.
 	return smtp.SendMail(
-		fmt.Sprint(host, ":587"),
+		fmt.Sprint(host, ":2525"),
 		auth,
 		fmt.Sprintf("%s@%s", senderID, global.Domain),
 		[]string{pcRecipient},
