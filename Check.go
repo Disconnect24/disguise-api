@@ -49,14 +49,7 @@ func Check(w http.ResponseWriter, r *http.Request, inter int) {
 			break
 		}
 
-		// Awesome, we've a valid user.
-		//err = datastore.Get(ctx, userKey, currentUser)
-		//if err != nil {
-		//	log.Errorf(ctx, "Error loading mlid from database, despite returned from query: %v", err)
-		//	fmt.Fprintf(w, GenNormalErrorCode(420, "Unable to formulate authentication statement."))
-		//	return
-		//}
-
+		// Awesome, we're a valid user.
 		// We don't need to remove the w from friend code as it's not stored that way
 		mailQuery := datastore.NewQuery("Mails").
 			Filter("Delivered = ", false).
