@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
 	"net/smtp"
+	"google.golang.org/appengine/log"
 )
 
 var mailFormName = regexp.MustCompile(`m\d+`)
@@ -28,7 +28,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 	// Parse form in preparation for finding mail.
 	err := r.ParseMultipartForm(-1)
 	if err != nil {
-		log.Fatal(err)
+		log.Errorf(ctx, "Unable to parse form: %v", err)
 	}
 
 	for name, contents := range r.MultipartForm.Value {
@@ -131,7 +131,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 		for _, pcRecipient := range pcRecipientIDs {
 			err := handlePCmail(senderID, pcRecipient, mailContents)
 			if err != nil {
-				log.Println(err)
+				log.Errorf(ctx, "Unable to send email: %v", err)
 				eventualOutput += GenMailErrorCode(mailNumber, 351, "Issue sending mail via SendGrid.")
 				break
 			}
