@@ -10,8 +10,9 @@ import (
 
 // Config structure for `config.json`.
 type Config struct {
-	Domain       string
-	MailInterval int
+	Domain         string
+	MailInterval   int
+	SendGridAPIKey string
 }
 
 var global Config
@@ -48,5 +49,5 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendHandler(w http.ResponseWriter, r *http.Request) {
-	Send(w, r, global.Domain)
+	Send(w, r, global)
 }
