@@ -22,7 +22,7 @@ func Account(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	taskKey := datastore.NewKey(ctx, "Accounts", wiiID, 0, nil)
+	taskKey := datastore.NewKey(ctx, "Accounts", wiiID[1:], 0, nil)
 
 	// Generate passwd and mlchkid
 	mlchkid := RandStringBytesMaskImprSrc(32)
