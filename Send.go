@@ -3,13 +3,13 @@ package disguise
 import (
 	"bufio"
 	"fmt"
+	"github.com/Disconnect24/appengine-smtp"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/log"
 	"net/http"
 	"regexp"
 	"strings"
-	"net/smtp"
-	"google.golang.org/appengine/log"
 )
 
 var mailFormName = regexp.MustCompile(`m\d+`)
@@ -129,7 +129,24 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 		}
 
 		for _, pcRecipient := range pcRecipientIDs {
-			err := handlePCmail(senderID, pcRecipient, mailContents)
+			// Connect to the remote SMTP server.
+			host := "smtp.sendgrid.net"
+			auth := smtp.PlainAuth(
+				"",
+				"apikey",
+				global.SendGridAPIKey,
+				host,
+			)
+			// The only reason we can get away with the following is
+			// because the Wii POSTs valid SMTP syntax.
+			err := smtp.SendMail(
+				ctx,
+				fmt.Sprint(host, ":2525"),
+				auth,
+				fmt.Sprintf("%s@%s", senderID, global.Domain),
+				[]string{pcRecipient},
+				[]byte(mailContents),
+			)
 			if err != nil {
 				log.Errorf(ctx, "Unable to send email: %v", err)
 				eventualOutput += GenMailErrorCode(mailNumber, 351, "Issue sending mail via SendGrid.")
@@ -141,24 +158,4 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 
 	// We're completely done now.
 	fmt.Fprint(w, eventualOutput)
-}
-
-func handlePCmail(senderID string, pcRecipient string, mailContents string) error {
-	// Connect to the remote SMTP server.
-	host := "smtp.sendgrid.net"
-	auth := smtp.PlainAuth(
-		"",
-		"apikey",
-		global.SendGridAPIKey,
-		host,
-	)
-	// The only reason we can get away with the following is
-	// because the Wii POSTs valid SMTP syntax.
-	return smtp.SendMail(
-		fmt.Sprint(host, ":2525"),
-		auth,
-		fmt.Sprintf("%s@%s", senderID, global.Domain),
-		[]string{pcRecipient},
-		[]byte(mailContents),
-	)
 }
