@@ -43,13 +43,8 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 	// Handle the all mail! \o/
 	for mailNumber, contents := range mailPart {
 		var linesToRemove string
-		// I'm making this a string for similar reasons as below.
-		// Plus it beats repeated `strconv.Itoa`s
 		var wiiRecipientIDs []string
 		var pcRecipientIDs []string
-		// Yes, senderID is a string. >.<
-		// The database contains `w<16 digit ID>` due to previous PHP scripts.
-		// POTENTIAL TODO: remove w from database?
 		var senderID string
 		var data string
 
