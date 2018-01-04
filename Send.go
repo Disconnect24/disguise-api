@@ -2,7 +2,6 @@ package disguise
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
@@ -10,6 +9,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"net/smtp"
 )
 
 var mailFormName = regexp.MustCompile(`m\d+`)
@@ -17,7 +17,7 @@ var mailFrom = regexp.MustCompile(`^MAIL FROM:\s(w[0-9]*)@(?:.*)$`)
 var rcptFrom = regexp.MustCompile(`^RCPT TO:\s(.*)@(.*)$`)
 
 // Send takes POSTed mail by the Wii and stores it in the database for future usage.
-func Send(w http.ResponseWriter, r *http.Request, domain string) {
+func Send(w http.ResponseWriter, r *http.Request, global Config) {
 	ctx := appengine.NewContext(r)
 
 	w.Header().Add("Content-Type", "text/plain;charset=utf-8")
@@ -92,7 +92,7 @@ func Send(w http.ResponseWriter, r *http.Request, domain string) {
 				if potentialRecipient[2] == "wii.com" {
 					// We're not gonna allow you to send to a defunct domain. ;P
 					break
-				} else if potentialRecipient[2] == domain {
+				} else if potentialRecipient[2] == global.Domain {
 					// Wii <-> Wii mail. We can handle this.
 					wiiRecipientIDs = append(wiiRecipientIDs, potentialRecipient[1])
 				} else {
@@ -144,22 +144,21 @@ func Send(w http.ResponseWriter, r *http.Request, domain string) {
 }
 
 func handlePCmail(senderID string, pcRecipient string, mailContents string) error {
-	//// Connect to the remote SMTP server.
-	//host := "smtp.sendgrid.net"
-	//auth := smtp.PlainAuth(
-	//	"",
-	//	"apikey",
-	//	config.SendGridKey,
-	//	host,
-	//)
-	//// The only reason we can get away with the following is
-	//// because the Wii POSTs valid SMTP syntax.
-	//return smtp.SendMail(
-	//	fmt.Sprint(host, ":587"),
-	//	auth,
-	//	fmt.Sprintf("%s@%s", senderID, config.SendGridDomain),
-	//	[]string{pcRecipient},
-	//	[]byte(mailContents),
-	//)
-	return errors.New("not currently supported")
+	// Connect to the remote SMTP server.
+	host := "smtp.sendgrid.net"
+	auth := smtp.PlainAuth(
+		"",
+		"apikey",
+		global.SendGridAPIKey,
+		host,
+	)
+	// The only reason we can get away with the following is
+	// because the Wii POSTs valid SMTP syntax.
+	return smtp.SendMail(
+		fmt.Sprint(host, ":587"),
+		auth,
+		fmt.Sprintf("%s@%s", senderID, global.Domain),
+		[]string{pcRecipient},
+		[]byte(mailContents),
+	)
 }

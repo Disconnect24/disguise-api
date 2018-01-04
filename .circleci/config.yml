@@ -21,7 +21,8 @@ jobs:
               echo "$CLIENT_SECRET" | base64 --decode > ${HOME}/client-secret.json
               $HOME/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file $HOME/client-secret.json
               $HOME/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT
-              # Copy "sample" config as actual, since that's what we use.
+              # Copy "sample" config as actual, since that's what we use. Then configure.
               cp $CIRCLE_WORKING_DIRECTORY/config.sample.json $CIRCLE_WORKING_DIRECTORY/config.json
+              sed -i "s/REPLACE_SENDGRID_KEY/$SENDGRID_API_KEY/g" $CIRCLE_WORKING_DIRECTORY/config.json
               $HOME/google-cloud-sdk/bin/gcloud -q app deploy app.yaml --promote
             fi

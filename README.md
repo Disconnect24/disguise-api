@@ -18,6 +18,6 @@ dev_appserver.py app.yaml
 
 `dev_appserver.py` emulates App Engine locally. Check out the log, and go to its admin page. This can be very helpful for debugging issues with how mail is stored, i.e in Cloud Datastore.
 
-We don't particularly mind you using our domain for testing, but if you are planning on forking us we do mind. Check out `config.sample.json`: our CircleCI configuration copies itself. What you're seeing as sample is what we do in production. If you're testing locally, you __will__ need to copy it over for yourself!
+We don't particularly mind you using our domain for testing, but if you are planning on forking us we do mind. Check out `config.sample.json`: our CircleCI configuration copies it and edits it. What you're seeing as sample is what we do in production. If you're testing locally, you __will__ need to copy it over for yourself!
 
 Also in `config.sample.json` is `mailinterval`: this is how many minutes we tell your Wii to space out the check-in for more mail.
