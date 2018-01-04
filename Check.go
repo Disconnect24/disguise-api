@@ -1,12 +1,12 @@
 package disguise
 
 import (
-	"net/http"
-	"strconv"
 	"fmt"
-	"google.golang.org/appengine/log"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/log"
+	"net/http"
+	"strconv"
 )
 
 // HMAC key most likely used for `chlng`

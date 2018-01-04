@@ -2,11 +2,11 @@ package disguise
 
 import (
 	"fmt"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/log"
 	"net/http"
 	"strconv"
-	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
 )
 
 // Delete handles delete requests of mail.
@@ -29,7 +29,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	query := datastore.NewQuery("Mails").
 		Filter("Delivered = ", true).
-	// Remove w from friend code
+		// Remove w from friend code
 		Filter("SenderID = ", wiiID[1:]).
 		Limit(delnum)
 	for mailToDelete := query.Run(ctx); ; {

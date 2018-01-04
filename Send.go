@@ -2,14 +2,14 @@ package disguise
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
-	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine"
-	"errors"
 )
 
 var mailFormName = regexp.MustCompile(`m\d+`)

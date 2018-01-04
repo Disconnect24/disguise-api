@@ -3,9 +3,9 @@ package disguise
 import (
 	"net/http"
 
-	"os"
 	"encoding/json"
 	"fmt"
+	"os"
 )
 
 // Config structure for `config.json`.
