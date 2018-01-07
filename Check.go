@@ -44,24 +44,25 @@ func Check(w http.ResponseWriter, r *http.Request, inter int) {
 	query := datastore.NewQuery("Accounts").Filter("Mlchkid = ", mlchkid).Limit(1)
 	for mlidResult := query.Run(ctx); ; {
 		var currentUser Accounts
-		_, err := mlidResult.Next(&currentUser)
+		accountKey, err := mlidResult.Next(&currentUser)
 		if err == datastore.Done {
 			break
 		}
 
 		// Awesome, we're a valid user.
 		// We don't need to remove the w from friend code as it's not stored that way
-		mailQuery := datastore.NewQuery("Mails").
+		mailQuery := datastore.NewQuery("Mail").
 			Filter("Delivered = ", false).
-			Filter("SenderID = ", currentUser.Mlchkid)
+			Filter("RecipientID = ", accountKey.StringID())
 
 		// By default, we'll assume there's no mail.
 		size := 0
 
 		// Go through returned rows and increment the size!
-		for mailQuery.Run(ctx); ; {
+		for mails := mailQuery.Run(ctx); ; {
 			var mail Mail
-			_, err := mlidResult.Next(&mail)
+			_, err := mails.Next(&mail)
+
 			if err == datastore.Done {
 				break
 			}
