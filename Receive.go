@@ -49,7 +49,7 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 		// We don't need to remove the w from friend code as it's not stored that way
 		mailQuery := datastore.NewQuery("Mail").
 			Filter("Delivered = ", false).
-			Filter("SenderID = ", mlidKey.StringID())
+			Filter("RecipientID = ", mlidKey.StringID())
 
 		// By default, we'll assume there's no mail.
 		var totalMailOutput string
