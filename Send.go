@@ -26,7 +26,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 	mailPart := make(map[string]string)
 
 	// Parse form in preparation for finding mail.
-	err := r.ParseMultipartForm(-1)
+	err := r.ParseMultipartForm(10 * 1024)
 	if err != nil {
 		log.Errorf(ctx, "Unable to parse form: %v", err)
 	}
