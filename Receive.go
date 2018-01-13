@@ -55,7 +55,7 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 		var totalMailOutput string
 		var amountOfMail = 0
 		var mailSize = 0
-		var wc24MimeBoundary = fmt.Sprint("BoundaryForDL", fmt.Sprint(time.Now().Format("200601021504")), "/", random(1000000, 9999999))
+		var wc24MimeBoundary = GenerateBoundary()
 
 		// Go through returned rows and increment the size!
 		for mailResult := mailQuery.Run(ctx); ; {

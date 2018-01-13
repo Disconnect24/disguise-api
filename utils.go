@@ -72,3 +72,8 @@ func FriendCodeIsValid(wiiID string) bool {
 		return true
 	}
 }
+
+// GenerateBoundary returns a string in the Wii specific boundary format.
+func GenerateBoundary() string {
+	return fmt.Sprint("BoundaryForDL", fmt.Sprint(time.Now().Format("200601021504")), "/", random(1000000, 9999999))
+}
