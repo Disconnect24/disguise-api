@@ -1,0 +1,6 @@
+service: frontend
+runtime: go
+api_version: go1
+
+handlers:
+- url: /.*

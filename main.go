@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -29,19 +28,11 @@ func init() {
 		panic(err)
 	}
 
-	// Handle literally anything that isn't matched below
-	http.HandleFunc("/", slashHandler)
-
 	http.HandleFunc("/cgi-bin/account.cgi", Account)
 	http.HandleFunc("/cgi-bin/check.cgi", checkHandler)
 	http.HandleFunc("/cgi-bin/receive.cgi", Receive)
 	http.HandleFunc("/cgi-bin/delete.cgi", Delete)
 	http.HandleFunc("/cgi-bin/send.cgi", sendHandler)
-}
-
-func slashHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "hi, disguise-api here, identifying as ", global.Domain,
-		" and asking Wiis to check in every ", global.MailInterval, " min")
 }
 
 func checkHandler(w http.ResponseWriter, r *http.Request) {
