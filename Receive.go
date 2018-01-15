@@ -32,7 +32,7 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 
 	passwd := r.Form.Get("passwd")
 	if passwd == "" || len(passwd) != 16 {
-		fmt.Fprintf(w, GenNormalErrorCode(330, "Unable to parse parameters."))
+		fmt.Fprintf(w, GenNormalErrorCode(ctx, 330, "Unable to parse parameters."))
 		return
 	}
 
@@ -104,7 +104,7 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Only runs if not returned from earlier.
-	fmt.Fprintf(w, GenNormalErrorCode(220, "Invalid authentication."))
+	fmt.Fprintf(w, GenNormalErrorCode(ctx, 220, "Invalid authentication."))
 	return
 }
 

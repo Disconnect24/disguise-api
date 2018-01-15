@@ -18,13 +18,13 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	delnum, err := strconv.Atoi(r.Form.Get("delnum"))
 	if err != nil {
-		fmt.Fprint(w, GenNormalErrorCode(610, "delnum is invalid."))
+		fmt.Fprint(w, GenNormalErrorCode(ctx, 610, "delnum is invalid."))
 		return
 	}
 
 	passwd := r.Form.Get("passwd")
 	if passwd == "" || len(passwd) != 16 {
-		fmt.Fprintf(w, GenNormalErrorCode(330, "Unable to parse parameters."))
+		fmt.Fprintf(w, GenNormalErrorCode(ctx, 330, "Unable to parse parameters."))
 		return
 	}
 
@@ -39,7 +39,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 		query := datastore.NewQuery("Mail").
 			Filter("Delivered = ", true).
-		// Remove w from friend code
+			// Remove w from friend code
 			Filter("RecipientID = ", mlidKey.StringID()).
 			Limit(delnum)
 		for mailToDelete := query.Run(ctx); ; {
@@ -50,24 +50,24 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 			}
 			if err != nil {
 				log.Warningf(ctx, "Couldn't cycle through mail! %v", err)
-				fmt.Fprintf(w, GenNormalErrorCode(541, "Issue deleting mail from the database."))
+				fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
 				return
 			}
 
 			// delet this
 			if datastore.Delete(ctx, mailKey) != nil {
 				log.Errorf(ctx, "Couldn't delete mail from database!")
-				fmt.Fprintf(w, GenNormalErrorCode(541, "Issue deleting mail from the database."))
+				fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
 				return
 			}
 		}
 
-		fmt.Fprint(w, GenNormalErrorCode(100, "Success."),
+		fmt.Fprint(w, GenNormalErrorCode(ctx, 100, "Success."),
 			"delnum=", delnum)
 		return
 	}
 
 	// Only runs if not returned from earlier.
-	fmt.Fprintf(w, GenNormalErrorCode(220, "Invalid authentication."))
+	fmt.Fprintf(w, GenNormalErrorCode(ctx, 220, "Invalid authentication."))
 	return
 }

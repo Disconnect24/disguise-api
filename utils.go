@@ -1,8 +1,9 @@
 package disguise
 
 import (
+	"context"
 	"fmt"
-	"log"
+	"google.golang.org/appengine/log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -38,9 +39,9 @@ func RandStringBytesMaskImprSrc(n int) string {
 }
 
 // GenMailErrorCode formulates a proper response needed for mail-specific errors.
-func GenMailErrorCode(mailNumber string, error int, reason string) string {
+func GenMailErrorCode(ctx context.Context, mailNumber string, error int, reason string) string {
 	if error != 100 {
-		log.Println("[Warning] Encountered error", error, "with reason", reason)
+		log.Warningf(ctx, "Encountered error", error, "with reason", reason)
 	}
 
 	return fmt.Sprint(
@@ -49,9 +50,9 @@ func GenMailErrorCode(mailNumber string, error int, reason string) string {
 }
 
 // GenNormalErrorCode formulates a proper response for overall errors.
-func GenNormalErrorCode(error int, reason string) string {
+func GenNormalErrorCode(ctx context.Context, error int, reason string) string {
 	if error != 100 {
-		log.Println("[Warning] Encountered error", error, "with reason", reason)
+		log.Warningf(ctx, "Encountered error", error, "with reason", reason)
 	}
 	return fmt.Sprint(
 		"cd=", strconv.Itoa(error), "\n",

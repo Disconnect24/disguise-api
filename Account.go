@@ -18,7 +18,7 @@ func Account(w http.ResponseWriter, r *http.Request) {
 
 	wiiID := r.Form.Get("mlid")
 	if !FriendCodeIsValid(wiiID) {
-		fmt.Fprint(w, GenNormalErrorCode(610, "Invalid friend code."))
+		fmt.Fprint(w, GenNormalErrorCode(ctx, 610, "Invalid friend code."))
 		return
 	}
 
@@ -37,10 +37,10 @@ func Account(w http.ResponseWriter, r *http.Request) {
 	// Saves the new entity.
 	if _, err := datastore.Put(ctx, taskKey, &task); err != nil {
 		log.Errorf(ctx, "Failed to save task: %v", err)
-		fmt.Fprint(w, GenNormalErrorCode(450, "Database error."))
+		fmt.Fprint(w, GenNormalErrorCode(ctx, 450, "Database error."))
 	} else {
 		fmt.Fprint(w, fmt.Sprint("\n",
-			GenNormalErrorCode(100, "Success."),
+			GenNormalErrorCode(ctx, 100, "Success."),
 			"mlid=", wiiID, "\n",
 			"passwd=", passwd, "\n",
 			"mlchkid=", mlchkid, "\n"))

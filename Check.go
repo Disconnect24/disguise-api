@@ -29,14 +29,14 @@ func Check(w http.ResponseWriter, r *http.Request, inter int) {
 	// Parse form in preparation for finding mail.
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Fprintf(w, GenNormalErrorCode(330, "Unable to parse parameters."))
+		fmt.Fprintf(w, GenNormalErrorCode(ctx, 330, "Unable to parse parameters."))
 		log.Errorf(ctx, "%v", err)
 		return
 	}
 
 	mlchkid := r.Form.Get("mlchkid")
 	if mlchkid == "" || len(mlchkid) != 32 {
-		fmt.Fprintf(w, GenNormalErrorCode(330, "Unable to parse parameters."))
+		fmt.Fprintf(w, GenNormalErrorCode(ctx, 330, "Unable to parse parameters."))
 		return
 	}
 
@@ -77,7 +77,7 @@ func Check(w http.ResponseWriter, r *http.Request, inter int) {
 			mailFlag = RandStringBytesMaskImprSrc(33)
 		}
 
-		fmt.Fprint(w, GenNormalErrorCode(100, "Success."),
+		fmt.Fprint(w, GenNormalErrorCode(ctx, 100, "Success."),
 			"res=", hmacKey, "\n",
 			"mail.flag=", mailFlag, "\n",
 			"interval=", interval)
@@ -85,6 +85,6 @@ func Check(w http.ResponseWriter, r *http.Request, inter int) {
 	}
 
 	// Only runs if not returned from earlier.
-	fmt.Fprintf(w, GenNormalErrorCode(220, "Invalid authentication."))
+	fmt.Fprintf(w, GenNormalErrorCode(ctx, 220, "Invalid authentication."))
 	return
 }

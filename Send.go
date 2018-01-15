@@ -37,7 +37,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 		}
 	}
 
-	eventualOutput := GenNormalErrorCode(100, "Success.")
+	eventualOutput := GenNormalErrorCode(ctx, 100, "Success.")
 	eventualOutput += fmt.Sprint("mlnum=", len(mailPart), "\n")
 
 	// Handle the all mail! \o/
@@ -66,7 +66,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			if potentialMailFromWrapper != nil {
 				potentialMailFrom := potentialMailFromWrapper[1]
 				if potentialMailFrom == "w9999999999990000" {
-					eventualOutput += GenMailErrorCode(mailNumber, 351, "w9999999999990000 tried to send mail.")
+					eventualOutput += GenMailErrorCode(ctx, mailNumber, 351, "w9999999999990000 tried to send mail.")
 					break
 				}
 				senderID = potentialMailFrom
@@ -100,7 +100,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			}
 		}
 		if err := scanner.Err(); err != nil {
-			eventualOutput += GenMailErrorCode(mailNumber, 351, "Issue iterating over strings.")
+			eventualOutput += GenMailErrorCode(ctx, mailNumber, 351, "Issue iterating over strings.")
 			return
 		}
 		mailContents := strings.Replace(data, linesToRemove, "", -1)
@@ -118,7 +118,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			}
 			_, err := datastore.Put(ctx, mailKey, &mailStruct)
 			if err != nil {
-				eventualOutput += GenMailErrorCode(mailNumber, 450, "Database error.")
+				eventualOutput += GenMailErrorCode(ctx, mailNumber, 450, "Database error.")
 				return
 			}
 		}
@@ -144,11 +144,11 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			)
 			if err != nil {
 				log.Errorf(ctx, "Unable to send email: %v", err)
-				eventualOutput += GenMailErrorCode(mailNumber, 351, "Issue sending mail via SendGrid.")
+				eventualOutput += GenMailErrorCode(ctx, mailNumber, 351, "Issue sending mail via SendGrid.")
 				break
 			}
 		}
-		eventualOutput += GenMailErrorCode(mailNumber, 100, "Success.")
+		eventualOutput += GenMailErrorCode(ctx, mailNumber, 100, "Success.")
 	}
 
 	// We're completely done now.
