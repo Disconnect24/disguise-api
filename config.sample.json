@@ -1,5 +1,5 @@
 {
-  "domain": "disconnect24.xyz",
+  "domain": "mail.disconnect24.xyz",
   "mailinterval": 5,
   "sendgridapikey": "REPLACE_SENDGRID_KEY"
 }
