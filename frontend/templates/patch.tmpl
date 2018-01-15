@@ -1,0 +1,14 @@
+{{define "content"}}
+{{template "header"}}
+<h1>super cool online wii mail interface</h1>
+<ul>
+    <li>todo: actual design and authentication?</li>
+</ul>
+for now though, please submit your config with the following form.
+<br>
+<form action="/parse" method="post">
+    <input type="file" name="uploaded_config"><br>
+    <input type="submit" value="upload that config to our magical server">
+</form>
+{{template "footer"}}
+{{end}}
