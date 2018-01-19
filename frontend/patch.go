@@ -4,6 +4,7 @@ import (
 	"errors"
 	"encoding/binary"
 	"bytes"
+	"io/ioutil"
 )
 
 func PatchNwcConfig(originalConfig []byte) (patchedConfig []byte, err error) {
@@ -25,11 +26,29 @@ func PatchNwcConfig(originalConfig []byte) (patchedConfig []byte, err error) {
 	copy(config.MailDomain[:], []byte("@mail.disconnect24.xyz"))
 
 	// The following is very redundantly written. TODO: fix that?
-	copy(config.AccountURL[:], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
-	copy(config.CheckURL[:], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
-	copy(config.ReceiveURL[:], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
-	copy(config.DeleteURL[:], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
-	copy(config.SendURL[:], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
+	copy(config.AccountURL[:128], []byte("http://mail.disconnect24.xyz/cgi-bin/account.cgi"))
+	copy(config.CheckURL[:128], []byte("http://mail.disconnect24.xyz/cgi-bin/check.cgi"))
+	copy(config.ReceiveURL[:128], []byte("http://mail.disconnect24.xyz/cgi-bin/receive.cgi"))
+	copy(config.DeleteURL[:128], []byte("http://mail.disconnect24.xyz/cgi-bin/delete.cgi"))
+	copy(config.SendURL[:128], []byte("http://mail.disconnect24.xyz/cgi-bin/send.cgi"))
 
-	return nil, nil
+	// Checksum.
+	// We loop from 1020 to avoid current checksum.
+	// Take every 4 bytes, add 'er up!
+	for i := 0; i < 1020; i += 4 {
+
+	}
+
+	fileBuf := new(bytes.Buffer)
+	err = binary.Write(fileBuf, binary.BigEndian, config)
+	if err != nil {
+		return nil, err
+	}
+
+	patchedConfig, err = ioutil.ReadAll(fileBuf)
+	if err != nil {
+		return nil, err
+	} else {
+		return patchedConfig, nil
+	}
 }

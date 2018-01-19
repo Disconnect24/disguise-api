@@ -8,9 +8,9 @@ type ConfigFormat struct {
 	FriendCode        int64
 	AmountOfCreations int32
 	HasRegistered     int32
-	MailDomain        [40]byte
-	Passwd            [20]byte
-	Mlchkid           [24]byte
+	MailDomain        [64]byte
+	Passwd            [32]byte
+	Mlchkid           [36]byte
 	AccountURL        [128]byte
 	CheckURL          [128]byte
 	ReceiveURL        [128]byte
