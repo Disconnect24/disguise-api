@@ -66,7 +66,7 @@ func configHandle(w http.ResponseWriter, r *http.Request) {
 		}
 
 		file, err := ioutil.ReadAll(fileWriter)
-		patched, err := PatchNwcConfig(file)
+		patched, err := PatchNwcConfig(ctx, file)
 		w.Header().Add("Content-Type", "application/octet-stream")
 		w.Header().Add("Content-Disposition", "attachment; filename=\"nwc24msg.cfg\"")
 		w.Write(patched)

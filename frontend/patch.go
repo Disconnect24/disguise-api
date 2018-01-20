@@ -5,12 +5,15 @@ import (
 	"encoding/binary"
 	"bytes"
 	"io/ioutil"
-	"log"
+	"context"
+	"google.golang.org/appengine/datastore"
+	"strconv"
+	"google.golang.org/appengine/log"
 )
 
 // PatchNwcConfig takes an original config, applies needed patches to the URL and such,
 // updates the checksum and returns either nil, error or a patched config w/o error.
-func PatchNwcConfig(originalConfig []byte) ([]byte, error) {
+func PatchNwcConfig(ctx context.Context, originalConfig []byte) ([]byte, error) {
 	if len(originalConfig) != 1024 {
 		return nil, errors.New("invalid config size")
 	}
@@ -26,6 +29,28 @@ func PatchNwcConfig(originalConfig []byte) ([]byte, error) {
 		return nil, errors.New("invalid magic")
 	}
 
+	// Figure out mlid
+	mlid := strconv.Itoa(int(config.FriendCode))
+	if len(mlid) == 15 {
+		// Chances are this has a 0 at the start.
+		mlid = "0" + mlid
+	}
+
+	// Go ahead and push read data.
+	taskKey := datastore.NewKey(ctx, "Accounts", mlid, 0, nil)
+
+	// Fill up with data.
+	task := Accounts{
+		Mlchkid: string(config.Mlchkid[:]),
+		Passwd:  string(config.Passwd[:]),
+	}
+
+	if _, err := datastore.Put(ctx, taskKey, &task); err != nil {
+		log.Errorf(ctx, "Failed to save account: %v", err)
+		return nil, err
+	}
+
+	// Alright, now it's time to patch.
 	copy(config.MailDomain[:], []byte("@mail.disconnect24.xyz"))
 
 	// The following is very redundantly written. TODO: fix that?
@@ -52,7 +77,6 @@ func PatchNwcConfig(originalConfig []byte) ([]byte, error) {
 	// We loop from 1020 to avoid current checksum.
 	// Take every 4 bytes, add 'er up!
 	for i := 0; i < 1020; i += 4 {
-		log.Printf("hello, %s", i)
 		addition := binary.BigEndian.Uint32(patchedConfig[i:i+4])
 		checksumInt += addition
 	}
