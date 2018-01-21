@@ -8,6 +8,7 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 	"io/ioutil"
+	"path"
 )
 
 var templates *template.Template
@@ -30,7 +31,6 @@ func init() {
 	}
 
 	templates, err = template.ParseFiles(templatePaths...)
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// We only want the primary page.
 		if r.URL.Path != "/" {
@@ -51,7 +51,6 @@ func init() {
 	})
 	http.HandleFunc("/patch", configHandle)
 }
-
 func configHandle(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
@@ -80,4 +79,13 @@ func configHandle(w http.ResponseWriter, r *http.Request) {
 
 func patchConfig(config []byte) error {
 	return nil
+}
+
+func respondWithFile(w http.ResponseWriter, r *http.Request) {
+	// Serve the file needed per the path name.
+	file, err := ioutil.ReadFile("frontend/assets/" + path.Base(r.URL.Path))
+	if err != nil {
+			print(err)
+	}
+	w.Write(file)
 }
