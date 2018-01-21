@@ -1,16 +1,32 @@
 {{define "content"}}
-{{template "header"}}
-<h1>super cool online wii mail interface</h1>
-<ul>
-    <li>todo: actual design and authentication?</li>
-</ul>
-for now though, please submit your config with the following form.
-<br>
-we'll register you right away!
-<br>
-<form action="/patch" method="post" enctype="multipart/form-data">
-    <input type="file" name="uploaded_config"><br>
-    <input type="submit" value="upload that config to our magical server">
+<main class="mdl-layout__content">
+<div class="page-content">
+<div id="patch">
+<h3>Patch:</h3>
+<h4>Please submit your config with the form; we'll register you right away!</h4>
+<form action="/patch" method="post" enctype="multipart/form-data" class="dropzone">
+    <input type="file" name="uploaded_config"><br/><br/>
+    <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" value="Upload and Patch!">
 </form>
-{{template "footer"}}
+<br/>
+</div>
+<div id="todo">
+<h3>To Do:</h3>
+<ul>
+    <li>Authentication.</li>
+    <li>Dynamic interval dependant on load.</li>
+    <li>Potentially federation.</li>
+</ul>
+</div>
+<div id="credits">
+<h2>Credits</h2>
+<h4>Developers</h3>
+<ul>
+    <li>Spotlight; Lead Mail Developer</li>
+    <li>TheMrIron2; Developer</li>
+    <li>ZenPowerBuilder; Developer.</li>
+    <li>Billy; webdev.</li>
+</ul>
+</div>
+</main>
 {{end}}
