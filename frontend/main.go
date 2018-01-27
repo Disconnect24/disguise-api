@@ -8,7 +8,6 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 	"io/ioutil"
-	"path"
 )
 
 var templates *template.Template
@@ -54,7 +53,6 @@ func init() {
 func configHandle(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 
-
 	switch r.Method {
 	case "POST":
 		// todo: a u t h e n t i c a t i o n
@@ -75,17 +73,4 @@ func configHandle(w http.ResponseWriter, r *http.Request) {
 	default:
 		break
 	}
-}
-
-func patchConfig(config []byte) error {
-	return nil
-}
-
-func respondWithFile(w http.ResponseWriter, r *http.Request) {
-	// Serve the file needed per the path name.
-	file, err := ioutil.ReadFile("frontend/assets/" + path.Base(r.URL.Path))
-	if err != nil {
-			print(err)
-	}
-	w.Write(file)
 }
