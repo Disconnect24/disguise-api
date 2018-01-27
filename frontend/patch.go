@@ -38,11 +38,13 @@ func PatchNwcConfig(ctx context.Context, originalConfig []byte) ([]byte, error) 
 
 	// Go ahead and push read data.
 	taskKey := datastore.NewKey(ctx, "Accounts", mlid, 0, nil)
+	mlchkid := RandStringBytesMaskImprSrc(32)
+	passwd := RandStringBytesMaskImprSrc(16)
 
 	// Fill up with data.
 	task := Accounts{
-		Mlchkid: string(config.Mlchkid[:]),
-		Passwd:  string(config.Passwd[:]),
+		Mlchkid: mlchkid,
+		Passwd:  passwd,
 	}
 
 	if _, err := datastore.Put(ctx, taskKey, &task); err != nil {
