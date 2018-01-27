@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+	"regexp"
 )
 
 // https://stackoverflow.com/a/31832326/3874884
@@ -18,6 +19,7 @@ const (
 	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
+var MailRegex = regexp.MustCompile(`w\d{16}`)
 
 // RandStringBytesMaskImprSrc makes a random string with the specified size.
 func RandStringBytesMaskImprSrc(n int) string {
@@ -63,15 +65,7 @@ func GenNormalErrorCode(ctx context.Context, error int, reason string) string {
 // checking not empty, is 17 in length, starts with w.
 // BUG(spotlightishere): does not actually determine at a numerical level if valid.
 func FriendCodeIsValid(wiiID string) bool {
-	if wiiID == "" {
-		return false
-	} else if wiiID[0:1] != "w" {
-		return false
-	} else if len(wiiID) != 17 {
-		return false
-	} else {
-		return true
-	}
+	return MailRegex.MatchString(wiiID)
 }
 
 // GenerateBoundary returns a string in the Wii specific boundary format.
