@@ -89,8 +89,8 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		w.Header().Add("Content-Type", fmt.Sprint("multipart/mixed; boundary=", wc24MimeBoundary))
-		fmt.Fprint(w, "--", wc24MimeBoundary, "\r\n",
+		w.Header().Add("Content-Type", fmt.Sprint("multipart/mixed; boundary=BoundaryForDL", wc24MimeBoundary))
+		fmt.Fprint(w, "--BoundaryForDL", wc24MimeBoundary, "\r\n",
 			"Content-Type: text/plain\r\n\r\n",
 			"This part is ignored.\r\n\r\n\r\n\n",
 			"cd=100\n",
@@ -99,7 +99,7 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 			"mailsize=", mailSize, "\n",
 			"allnum=", amountOfMail, "\n",
 			totalMailOutput,
-			"\r\n--", wc24MimeBoundary, "--\r\n")
+			"\r\n--BoundaryForDL", wc24MimeBoundary, "--\r\n")
 		return
 	}
 

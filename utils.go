@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 	"regexp"
+	"encoding/hex"
 )
 
 // https://stackoverflow.com/a/31832326/3874884
@@ -19,6 +20,7 @@ const (
 	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
+
 var MailRegex = regexp.MustCompile(`w\d{16}`)
 
 // RandStringBytesMaskImprSrc makes a random string with the specified size.
@@ -70,5 +72,19 @@ func FriendCodeIsValid(wiiID string) bool {
 
 // GenerateBoundary returns a string in the Wii specific boundary format.
 func GenerateBoundary() string {
-	return fmt.Sprint("BoundaryForDL", fmt.Sprint(time.Now().Format("200601021504")), "/", random(1000000, 9999999))
+	return fmt.Sprint(time.Now().Format("200601021504"), "/", random(1000000, 9999999))
+}
+
+// SplitScreen was adapted from https://stackoverflow.com/a/45412336/3874884
+func SplitString(b []byte, size int) []string {
+	s := hex.EncodeToString(b)
+	ss := make([]string, 0, len(s)/size+1)
+	for len(s) > 0 {
+		if len(s) < size {
+			size = len(s)
+		}
+		ss, s = append(ss, s[:size]), s[size:]
+
+	}
+	return ss
 }
