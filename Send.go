@@ -123,6 +123,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			}
 		}
 
+		var pcError error
 		for _, pcRecipient := range pcRecipientIDs {
 			// Connect to the remote SMTP server.
 			host := "smtp.sendgrid.net"
@@ -134,7 +135,7 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 			)
 			// The only reason we can get away with the following is
 			// because the Wii POSTs valid SMTP syntax.
-			err := smtp.SendMail(
+			pcError = smtp.SendMail(
 				ctx,
 				fmt.Sprint(host, ":2525"),
 				auth,
@@ -142,14 +143,18 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 				[]string{pcRecipient},
 				[]byte(mailContents),
 			)
-			if err != nil {
-				log.Errorf(ctx, "Unable to send email: %v", err)
-				eventualOutput += GenMailErrorCode(ctx, mailNumber, 351, "Issue sending mail via SendGrid.")
-				fmt.Fprint(w, eventualOutput)
-				return 
+			if pcError != nil {
+				log.Errorf(ctx, "Unable to send email: %v", pcError)
+				// Escape loop, error writing is later on
+				break
 			}
 		}
-		eventualOutput += GenMailErrorCode(ctx, mailNumber, 100, "Success.")
+
+		if pcError != nil {
+			eventualOutput += GenMailErrorCode(ctx, mailNumber, 351, "Issue sending mail via SendGrid.")
+		} else {
+			eventualOutput += GenMailErrorCode(ctx, mailNumber, 100, "Success.")
+		}
 	}
 
 	// We're completely done now.
