@@ -115,6 +115,8 @@ func Send(w http.ResponseWriter, r *http.Request, global Config) {
 				Body:        mailContents,
 				RecipientID: wiiRecipient[1:],
 				Delivered:   false,
+				// Since we're not bucketed, we'll leave it empty.
+				BucketedKey: "",
 			}
 			_, err := datastore.Put(ctx, mailKey, &mailStruct)
 			if err != nil {

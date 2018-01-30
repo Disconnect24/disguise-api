@@ -13,4 +13,5 @@ type Mail struct {
 	Body        string
 	RecipientID string
 	Delivered   bool
+	BucketedKey string
 }

@@ -33,7 +33,7 @@ func init() {
 	http.HandleFunc("/cgi-bin/receive.cgi", Receive)
 	http.HandleFunc("/cgi-bin/delete.cgi", Delete)
 	http.HandleFunc("/cgi-bin/send.cgi", sendHandler)
-	http.HandleFunc("/sendgrid/parse", SendGridHandler)
+	http.HandleFunc("/sendgrid/parse", sendGridHandlerWrapper)
 }
 
 func checkHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,4 +42,8 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 
 func sendHandler(w http.ResponseWriter, r *http.Request) {
 	Send(w, r, global)
+}
+
+func sendGridHandlerWrapper(w http.ResponseWriter, r *http.Request) {
+	sendGridHandler(w, r, global.Domain)
 }
