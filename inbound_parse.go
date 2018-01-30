@@ -3,15 +3,15 @@ package disguise
 import (
 	"fmt"
 	"google.golang.org/appengine"
-	"net/http"
 	"google.golang.org/appengine/log"
+	"net/http"
 	"net/mail"
 	//"time"
-	"google.golang.org/appengine/datastore"
-	"regexp"
-	"google.golang.org/appengine/file"
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/file"
+	"regexp"
 )
 
 func sendGridHandler(w http.ResponseWriter, r *http.Request, wiiMailDomain string) {

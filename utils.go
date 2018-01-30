@@ -2,13 +2,13 @@ package disguise
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"google.golang.org/appengine/log"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"time"
-	"regexp"
-	"encoding/hex"
 )
 
 // https://stackoverflow.com/a/31832326/3874884
