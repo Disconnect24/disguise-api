@@ -10,6 +10,9 @@ import (
 	"google.golang.org/appengine/log"
 	"math/rand"
 	"time"
+	"google.golang.org/appengine/file"
+	"cloud.google.com/go/storage"
+	"io/ioutil"
 )
 
 // Receive loops through stored mail and formulates a response.
@@ -67,8 +70,38 @@ func Receive(w http.ResponseWriter, r *http.Request) {
 			log.Debugf(ctx, "Mail from %s to %s", mail.SenderID, mail.RecipientID)
 
 			individualMail := fmt.Sprint("\r\n--", wc24MimeBoundary, "\r\n")
-			individualMail += "Content-Type: text/plain\r\n\r\n"
-			individualMail += mail.Body
+			if mail.Body == "" {
+				// We have this stored locally.
+				individualMail += "Content-Type: text/plain\r\n\r\n"
+				individualMail += mail.Body
+			} else if mail.BucketedKey != "" {
+				// We'll have to get this out of Cloud Storage.
+				// Get default bucket name from App Engine
+				bucketName, err := file.DefaultBucketName(ctx)
+				if err != nil {
+					log.Errorf(ctx, "failed to get default bucket name: %v", err)
+					return
+				}
+
+				// Get client
+				client, err := storage.NewClient(ctx)
+				if err != nil {
+					log.Errorf(ctx, "failed to create storage client: %v", err)
+					return
+				}
+				// In current bucket, under folder mail, get a writer for the generated filename
+				fileReader, err := client.Bucket(bucketName).Object("mail/" + mail.BucketedKey).NewReader(ctx)
+				if err != nil {
+					log.Errorf(ctx, "recorded mail object didn't exist: %v", err)
+				}
+
+				fileContentByte, err := ioutil.ReadAll(fileReader)
+				if err != nil {
+					log.Errorf(ctx, "unable to read from recorded mail object: %v", err)
+				}
+				individualMail += string(fileContentByte)
+				client.Close()
+			}
 
 			mailSize = len(totalMailOutput + individualMail)
 
