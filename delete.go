@@ -7,6 +7,8 @@ import (
 	"google.golang.org/appengine/log"
 	"net/http"
 	"strconv"
+	"google.golang.org/appengine/file"
+	"cloud.google.com/go/storage"
 )
 
 // Delete handles delete requests of mail.
@@ -52,6 +54,30 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 				log.Warningf(ctx, "Couldn't cycle through mail! %v", err)
 				fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
 				return
+			}
+
+			if currentMail.BucketedKey != "" {
+				// This mail's contents is also stored in Cloud Storage.
+				bucketName, err := file.DefaultBucketName(ctx)
+				if err != nil {
+					log.Errorf(ctx, "failed to get default bucket name: %v", err)
+					fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
+					return
+				}
+
+				// Get client
+				client, err := storage.NewClient(ctx)
+				if err != nil {
+					log.Errorf(ctx, "failed to create storage client: %v", err)
+					fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
+					return
+				}
+				// In current bucket, under folder mail, get a writer for the generated filename
+				err = client.Bucket(bucketName).Object("mail/" + currentMail.BucketedKey).Delete(ctx)
+				if err != nil {
+					log.Errorf(ctx, "failed to delete from cloud storage: %v", err)
+					fmt.Fprintf(w, GenNormalErrorCode(ctx, 541, "Issue deleting mail from the database."))
+				}
 			}
 
 			// delet this
