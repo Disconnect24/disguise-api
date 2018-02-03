@@ -64,8 +64,7 @@ func GenNormalErrorCode(ctx context.Context, error int, reason string) string {
 }
 
 // FriendCodeIsValid determines if a friend code is valid by
-// checking not empty, is 17 in length, starts with w.
-// BUG(spotlightishere): does not actually determine at a numerical level if valid.
+// checking not empty, is 17 in length, starts with w, all numbers.
 func FriendCodeIsValid(wiiID string) bool {
 	return MailRegex.MatchString(wiiID)
 }
