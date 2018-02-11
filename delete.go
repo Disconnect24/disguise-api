@@ -10,7 +10,7 @@ import (
 )
 
 // Delete handles delete requests of mail.
-func Delete(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request, mailInterval int) {
 	ctx := appengine.NewContext(r)
 	// The original MySQL query specified to order by ascending.
 	// Cloud Datastore seems to do this by default.
@@ -39,7 +39,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 		query := datastore.NewQuery("Mail").
 			Filter("Delivered = ", true).
-			// Remove w from friend code
+		// Remove w from friend code
 			Filter("RecipientID = ", mlidKey.StringID()).
 			Limit(delnum)
 		for mailToDelete := query.Run(ctx); ; {
@@ -63,7 +63,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Fprint(w, GenNormalErrorCode(ctx, 100, "Success."),
-			"delnum=", delnum)
+			"deletenum=", delnum,
+			"rcv.interval=", mailInterval)
 		return
 	}
 

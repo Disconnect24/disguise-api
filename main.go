@@ -39,6 +39,10 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 	Check(w, r, global.MailInterval)
 }
 
+func deleteHAndler(w http.ResponseWriter, r *http.Request) {
+	Delete(w, r, global.MailInterval)
+}
+
 func sendHandler(w http.ResponseWriter, r *http.Request) {
 	Send(w, r, global)
 }
