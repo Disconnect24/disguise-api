@@ -31,7 +31,7 @@ func init() {
 	http.HandleFunc("/cgi-bin/account.cgi", Account)
 	http.HandleFunc("/cgi-bin/check.cgi", checkHandler)
 	http.HandleFunc("/cgi-bin/receive.cgi", Receive)
-	http.HandleFunc("/cgi-bin/delete.cgi", Delete)
+	http.HandleFunc("/cgi-bin/delete.cgi", deleteHandler)
 	http.HandleFunc("/cgi-bin/send.cgi", sendHandler)
 }
 
@@ -39,7 +39,7 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 	Check(w, r, global.MailInterval)
 }
 
-func deleteHAndler(w http.ResponseWriter, r *http.Request) {
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	Delete(w, r, global.MailInterval)
 }
 
