@@ -29,3 +29,6 @@ Also in `config.sample.json` is `mailinterval`: this is how many minutes we tell
 The `frontend` directory contains the main web patcher, which generates credentials and modifies the given `nwc24msg.cfg` accordingly.
 
 `inbound_parse.go` is in charge of handling inbound mail from SendGrid. It formulates a Wii Mail with attachments if needed, and stores in Google Cloud Storage (due to limited stored mail size). Because of this, and the fact that `send.go` has a specific stored format, "Bucketed" mail will have their `Body` as the path to get the mail's contents. `receive.go` handles this format as well, reading from Cloud Storage and serving right back out.
+
+# Credits
+ - majority of `wiimail.go`: [libsmtp](https://github.com/AeroNotix/libsmtp/blob/4d9c30fd8115a47bca315c654edb1f33877f137c/smtp.go)
