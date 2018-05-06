@@ -48,7 +48,7 @@ func PatchNwcConfig(ctx context.Context, originalConfig []byte) ([]byte, error) 
 	}
 
 	if _, err := datastore.Put(ctx, taskKey, &task); err != nil {
-		log.Errorf(ctx, "Failed to save account: %v", err)
+		log.Errorf(ctx, "failed to save account: %v", err)
 		return nil, err
 	}
 

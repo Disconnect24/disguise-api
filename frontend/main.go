@@ -57,13 +57,21 @@ func configHandle(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		// todo: a u t h e n t i c a t i o n
 		r.ParseForm()
+
 		fileWriter, _, err := r.FormFile("uploaded_config")
 		if err != nil {
 			log.Errorf(ctx, "incorrect file: %v", err)
 		}
 
 		file, err := ioutil.ReadAll(fileWriter)
+		if err != nil {
+			log.Errorf(ctx, "unable to read file entirely: %v", err)
+		}
 		patched, err := PatchNwcConfig(ctx, file)
+		if err != nil {
+			log.Errorf(ctx, "unable to patch: %v", err)
+			w.Write([]byte("It seems your patching went awry. Email devs@disconnect24.xyz to see if you can repatch."))
+		}
 		w.Header().Add("Content-Type", "application/octet-stream")
 		w.Header().Add("Content-Disposition", "attachment; filename=\"nwc24msg.cfg\"")
 		w.Write(patched)
